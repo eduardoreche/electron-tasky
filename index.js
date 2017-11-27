@@ -3,10 +3,11 @@ const electron = require('electron');
 const MainWindow = require('./app/main_window');
 const TimerTray = require('./app/timer_tray');
 
-const { app } = electron;
+const { app, ipcMain } = electron;
 
 let mainWindow;
 let tray;
+let iconPath;
 
 app.on('ready', () => {
   if (process.platform === 'darwin') app.dock.hide();
@@ -15,7 +16,19 @@ app.on('ready', () => {
 
   const iconName =
     process.platform === 'win32' ? 'windows-icon.png' : 'iconTemplate.png';
-  const iconPath = path.join(__dirname, `./src/assets/${iconName}`);
+  iconPath = path.join(__dirname, `./src/assets/${iconName}`);
 
   tray = new TimerTray(iconPath, mainWindow);
+});
+
+ipcMain.on('update-timer', (event, timeLeft) => {
+  if (process.platform === 'darwin') {
+    tray.setTitle(timeLeft);
+  } else {
+    tray.displayBalloon({
+      icon: iconPath,
+      title: '',
+      content: timeLeft
+    });
+  }
 });

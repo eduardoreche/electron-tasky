@@ -1,28 +1,29 @@
-import React, { Component } from "react";
-import { Route, Switch } from "react-router-dom";
+import React, { Component } from 'react';
+import { Route, Switch } from 'react-router-dom';
+import { ipcRenderer } from 'electron';
 
-import Header from "./Header";
-import TasksIndex from "./TasksIndex";
-import TasksShow from "./TasksShow";
-import Timer from "../utils/Timer";
-import Settings from "./Settings";
+import Header from './Header';
+import TasksIndex from './TasksIndex';
+import TasksShow from './TasksShow';
+import Timer from '../utils/Timer';
+import Settings from './Settings';
 
-const APP_DATA = JSON.parse(localStorage.getItem("__INITIAL_STATE__"));
+const APP_DATA = JSON.parse(localStorage.getItem('__INITIAL_STATE__'));
 
 const INITIAL_STATE = {
   tasks: [
-    { id: 1, task: "Build App1", totalTime: 10 },
-    { id: 2, task: "Build App2", totalTime: 60 },
-    { id: 3, task: "Build App3", totalTime: 1000 },
-    { id: 4, task: "Build App4", totalTime: 10000 },
-    { id: 5, task: "Build App5", totalTime: 100000 }
+    { id: 1, task: 'Build App1', totalTime: 10 },
+    { id: 2, task: 'Build App2', totalTime: 60 },
+    { id: 3, task: 'Build App3', totalTime: 1000 },
+    { id: 4, task: 'Build App4', totalTime: 10000 },
+    { id: 5, task: 'Build App5', totalTime: 100000 }
   ],
   activeTask: null,
   timer: {
     active: false,
     time: 10,
-    unit: "seconds",
-    display: ""
+    unit: 'seconds',
+    display: ''
   }
 };
 
@@ -43,16 +44,14 @@ class App extends Component {
   // -------- electron event handlers -----------------
   // --------------------------------------------------
 
-  onAppClose = () => {
-
-  };
+  onAppClose = () => {};
 
   updateTrayText = title => {
-
+    ipcRenderer.send('update-timer', title);
   };
 
   timerHasExpired = () => {
-
+    ipcRenderer.send('update-timer', '');
   };
 
   // -------- end of electron event handerls ----------
@@ -62,7 +61,7 @@ class App extends Component {
   }
 
   componentDidUpdate() {
-    localStorage.setItem("__INITIAL_STATE__", JSON.stringify(this.state));
+    localStorage.setItem('__INITIAL_STATE__', JSON.stringify(this.state));
   }
 
   initializeTimer(timerSettings = {}) {
@@ -218,7 +217,7 @@ class App extends Component {
 
 const styles = {
   container: {
-    height: "88vh"
+    height: '88vh'
   }
 };
 
